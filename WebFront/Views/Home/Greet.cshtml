@@ -1,0 +1,87 @@
+﻿<button id="getgreet" class="btn btn-outline-primary m-3">GetGreet</button>
+<button id="postgreet" class="btn btn-outline-primary m-3">PostGreet</button>
+<img id="progress" src="~/images/hourglass.gif" style="display:none" />
+<div id="result" class="text-danger ms-3"></div>
+
+@section Scripts {
+
+    <script>
+        var baseAddress="https://localhost:7015";   // Developing
+        // var baseAddress="https:xxx";             // Staging
+        // var baseAddress="https:yyy";             // Production
+
+
+        $("#getgreet").on("click", async function () {
+
+            /*
+            // fetch(...).then(...).catch(...) 使用的是 Promise pattern
+            // alert("getGreet alert");
+            var p = encodeURI("Name=小明");
+
+            $("#progress").show();  // 顯示進度圖示
+
+            // 編碼 query 參數
+            await fetch(`${baseAddress}/Ajax/Greet?${p}`,{
+                method:"GET"    // HTTP 方法不區分大小寫
+            }).then(respone=>{
+
+                $("#progress").hide();  // 隱藏進度圖示
+
+                if(respone.ok){
+                    return respone.text();
+                    // 依後端傳回的 Content-Type 使用 .text() 或 .json()
+                }
+            }).then(data=>{
+                alert(data);
+                $("#result").text(data);
+            }).catch(err=>{
+                alert(err.message);
+            });
+            */
+
+            // 使用 async/await pattern
+            try{
+                $("#progress").show();
+                var p = encodeURI("Name=小明");
+                var response=await fetch(`${baseAddress}/Ajax/Greet?Name=小明`,{
+                    method:"GET"
+                });
+                $("#progress").hide();
+                if(response.ok){
+                    var data=await response.text();
+                    $("#result").text(data);
+                }
+            }
+            catch(err){
+                $("#result").text(data);
+                alert(err.message);
+            }
+        });
+
+        $("#postgreet").on("click",async ()=>{
+            // alert("postGreet alert");
+
+            // 使用 async/await
+            try{
+                $("#progress").show();
+                var form=new FormData();
+                form.append("Name","小華");
+
+                var response=await fetch(`${baseAddress}/Ajax/FetchPostGreet`,{
+                    method:"POST",
+                    body:form
+                });
+                $("#progress").hide();
+                if(response.ok){
+                    var data=await response.text();
+                    $("#result").text(data);
+                }
+            }
+            catch(err){
+                $("#progress").hide();
+                alert(err.message);
+            }
+        });
+    </script>
+}
+

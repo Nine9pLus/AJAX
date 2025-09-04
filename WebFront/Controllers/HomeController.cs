@@ -23,7 +23,22 @@ namespace WebFront.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		// GET: Home/Greet
+		[HttpGet]
+		public IActionResult Greet()
+		{
+			return View();
+		}
+
+		// GET: Home/CheckName
+		[HttpGet]
+		public IActionResult CheckName()
+		{
+			return View();
+            //接畫面的GET/POST沒差
+		}
+
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
