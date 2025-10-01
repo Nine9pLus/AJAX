@@ -1,0 +1,64 @@
+﻿@* Rate *@
+
+@section Styles {
+
+    <style></style>
+}
+
+<div id="app" class="container" style="40%">
+    <h3 class="mb-3 text-center">匯率計算</h3>
+    <div class="form-floating mb-3">
+        <input class="form-control" v-model="rate" placeholder=""/>   @*雙向繫結*@
+        <label class="form-label">美金兌台幣匯率</label>
+    </div>   
+    <div class="form-floating mb-3">
+        <input class="form-control" v-model="twd" placeholder="" /> 
+        <label class="form-label">台幣</label>
+    </div>    
+    <div class="form-floating mb-3">
+        <input class="form-control" v-model="usd" placeholder="" />
+        <label class="form-label">美金</label>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="https://unpkg.com/vue@3.5.22/dist/vue.global.js"></script>
+    <script>
+        var vueApp={
+            data(){
+                return{
+                    rate:30,
+                    twd:1000,
+                    usd:0,
+                };
+            },
+            methods:{
+
+            },
+            watch:{
+                twd(newVal,oriVal){
+                    this.usd=(newVal / this.rate).toFixed(2); // 小數只顯示2位
+                },
+                // usd(newVal,oriVal){
+                //     this.twd=(newVal * this.rate).toFixed(2);
+                // },
+                rate(newVal,oriVal){
+                    this.usd=(this.twd / newVal).toFixed(2);
+                },
+            },
+            mounted:async function(){     // mount(掛載)成功 => 會觸發 mounted
+                var bassAddress="https://localhost:7236";
+                var response=await fetch(`${bassAddress}/Home/GetExchangeRate`,{
+                    method:"GET"    
+                });
+                if(response.ok){
+                    var data=await response.json();
+                    alert(JSON.stringify(data));    // 要先轉字串才能看到
+                    this.rate=data;    
+                }
+            },
+        };
+        var app=Vue.createApp(vueApp).mount("#app");
+    </script>
+}

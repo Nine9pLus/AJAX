@@ -1,0 +1,29 @@
+﻿@* Basic *@
+
+@section Styles{
+
+    <style></style>
+}
+
+<div id="app">
+    <!-- View -->
+    <h3>{{message}}</h3>
+</div>
+
+@section Scripts{
+
+    <script src="https://unpkg.com/vue@3.5.22/dist/vue.global.js"></script>
+    <script>
+        var vueApp={
+            data(){
+                return{     // model
+                    message:"Hello Vue" // 屬性
+                };
+            },
+            methods:{       // controller
+
+            }
+        };
+        var app=Vue.createApp(vueApp).mount("#app")
+    </script>
+}

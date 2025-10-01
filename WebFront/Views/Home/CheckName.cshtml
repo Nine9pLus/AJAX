@@ -10,7 +10,7 @@
 @section Scripts 
 {
     <script>
-        var baseAddress="https://localhost:7015";   // Developing
+        var baseAddress="https://localhost:7236";   // Developing
         // var baseAddress="https:xxx";             // Staging
         // var baseAddress="https:yyy";             // Production
 
@@ -29,7 +29,7 @@
                 if(response.ok){
                     var data=await response.text();
                     if(data=="true"){
-                        $("#result").text("查有此員工");
+                        $("#result").text("有此員工");
                     }
                     else{
                         $("#result").text("查無此員工");
