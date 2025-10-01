@@ -1,4 +1,4 @@
-﻿namespace EmployeeService.Controllers
+﻿namespace EmployeeService.DTO
 {
 	public class ResultDTO
 	{

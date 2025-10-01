@@ -1,0 +1,159 @@
+﻿<button id="getEmployees" class="btn btn-outline-success">GetEmployees</button>
+<button id="getEmployeesById" class="btn btn-outline-success">GetEmployeesById</button>
+<button id="insertEmployees" class="btn btn-outline-success">InsertEmployees</button>
+<button id="updataEmployees" class="btn btn-outline-success">UpdataEmployees</button>
+<button id="deleteEmployees" class="btn btn-outline-success">DeleteEmployees</button>
+<button id="atm" class="btn btn-outline-success">ATM</button>
+
+<input id="Id" />
+
+@section Scripts
+{
+    <script>
+        var baseAddress="https://localhost:7044"
+
+        $("#getEmployees").on("click",async ()=>{
+            // alert("Get Employees Clicked");
+            try{
+                var response=await fetch(`${baseAddress}/api/Employees`,{
+                    method:"GET",
+                });
+                if(response.ok){
+                    var data=await response.json();
+                    alert(JSON.stringify(data));
+                }
+            }
+            catch(err){
+                alert(err.message);
+            }
+        });
+
+        $("#getEmployeesById").on("click",async ()=>{
+            // alert("Get EmployeesById Clicked");
+            try{
+                // 寫死1
+                // `${baseAddress}/api/Employees/1`
+                // 也可以抓某個輸入
+                // var Id=$("#Id").val();
+                // var response=await fetch(`${baseAddress}/api/Employees/${Id}`,{
+
+                var response=await fetch(`${baseAddress}/api/Employees/1`,{
+                    method:"GET",
+                });
+                if(response.ok){
+                    var data=await response.json();
+                    alert(JSON.stringify(data));
+                }
+            }
+            catch(err){
+                alert(err.message);
+            }
+        });
+
+        $("#insertEmployees").on("click",async ()=>{
+            // alert("insertEmployees Clicked");
+            var Emp={
+                "employeeId": 0,
+                "firstName": "John2025",
+                "lastName": "0911",
+                "title": "student"
+            }
+            try{
+                var response=await fetch(`${baseAddress}/api/Employees`,{
+                    method:"POST",
+                    body:JSON.stringify(Emp),
+                    headers:{
+                        // server端要什麼格式這裡就傳什麼，不符會錯誤400
+                        "content-type":"application/json"
+                    }
+                });
+                if(response.ok){
+                    var data=await response.json();
+                    // alert(JSON.stringify(data));
+                    if(data.ok){
+                        alert("新增員工紀錄成功!");
+                    }
+                    else{
+                        alert("新增員工紀錄失敗!");
+                    }
+                }
+            }
+            catch(err){
+                alert(err.message);
+            }
+        });
+
+        $("#updataEmployees").on("click",async ()=>{
+            // alert("updataEmployees Clicked");
+            var Emp={
+                "employeeId": 17,
+                "firstName": "CEO2025",
+                "lastName": "0911",
+                "title": "CEO"
+            }
+            try{
+                var response=await fetch(`${baseAddress}/api/Employees/17`,{
+                    method:"PUT",
+                    body:JSON.stringify(Emp),
+                    headers:{
+                        // server端要什麼格式這裡就傳什麼，不符會錯誤400
+                        "content-type":"application/json"
+                    }
+                });
+                if(response.ok){
+                    var data=await response.json();
+                    // alert(JSON.stringify(data));
+                    if(data.ok){
+                        alert("修改員工紀錄成功!");
+                    }
+                    else{
+                        alert("修改員工紀錄失敗!");
+                    }
+                }
+            }
+            catch(err){
+                alert(err.message);
+            }
+        });
+
+        $("#deleteEmployees").on("click",async ()=>{
+            // alert("deleteEmployees Clicked");
+            try{
+               var Id=$("#Id").val();
+               var response=await fetch(`${baseAddress}/api/Employees/${Id}`,{
+                    method:"DELETE",
+              });
+                if(response.ok){
+                    var data=await response.json();
+                    // alert(JSON.stringify(data));
+                     if(data.ok){
+                        alert("刪除員工紀錄成功!");
+                    }
+                    else{
+                        alert("刪除員工紀錄失敗!");
+                    }
+                }
+            }
+            catch(err){
+                alert(err.message);
+            }
+        });
+
+        $("#atm").on("click",async ()=>{
+            // alert("Get EmployeesById Clicked");
+            try{
+                var response=await fetch("https://govdata.bot.com.tw/24961/1/ByCountry?country=%E6%A1%83%E5%9C%92%E5%B8%82",{
+                    method:"GET",
+                });
+                if(response.ok){
+                    var data=await response.json();
+                    alert(JSON.stringify(data));
+                }
+            }
+            catch(err){
+                alert(err.message);
+            }
+        });
+    </script>
+}
+

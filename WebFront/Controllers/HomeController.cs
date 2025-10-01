@@ -23,6 +23,13 @@ namespace WebFront.Controllers
             return View();
         }
 
+		// GET: Home/Employee
+		[HttpGet]
+		public IActionResult Employee()
+		{
+			return View();
+		}
+
 		// GET: Home/Greet
 		[HttpGet]
 		public IActionResult Greet()
