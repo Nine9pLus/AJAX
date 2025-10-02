@@ -15,6 +15,8 @@ public partial class NorthwindContext : DbContext
 
     public virtual DbSet<Employee> Employees { get; set; }
 
+    public virtual DbSet<Product> Products { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Employee>(entity =>
@@ -46,6 +48,33 @@ public partial class NorthwindContext : DbContext
             entity.HasOne(d => d.ReportsToNavigation).WithMany(p => p.InverseReportsToNavigation)
                 .HasForeignKey(d => d.ReportsTo)
                 .HasConstraintName("FK_Employees_Employees");
+        });
+
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasIndex(e => e.CategoryId, "CategoriesProducts");
+
+            entity.HasIndex(e => e.CategoryId, "CategoryID");
+
+            entity.HasIndex(e => e.ProductName, "ProductName");
+
+            entity.HasIndex(e => e.SupplierId, "SupplierID");
+
+            entity.HasIndex(e => e.SupplierId, "SuppliersProducts");
+
+            entity.Property(e => e.ProductId).HasColumnName("ProductID");
+            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.ProductName)
+                .IsRequired()
+                .HasMaxLength(40);
+            entity.Property(e => e.QuantityPerUnit).HasMaxLength(20);
+            entity.Property(e => e.ReorderLevel).HasDefaultValue((short)0);
+            entity.Property(e => e.SupplierId).HasColumnName("SupplierID");
+            entity.Property(e => e.UnitPrice)
+                .HasDefaultValue(0m)
+                .HasColumnType("money");
+            entity.Property(e => e.UnitsInStock).HasDefaultValue((short)0);
+            entity.Property(e => e.UnitsOnOrder).HasDefaultValue((short)0);
         });
 
         OnModelCreatingPartial(modelBuilder);

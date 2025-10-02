@@ -18,6 +18,10 @@
       {
          "Name": "[dbo].[Employees]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Products]",
+         "ObjectType": 0
       }
    ],
    "UiHint": null,

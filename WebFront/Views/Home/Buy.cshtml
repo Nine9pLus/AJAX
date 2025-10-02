@@ -4,21 +4,43 @@
 }
 
 <div id="app">
-
+    <div class="container" style="width:40%">
+        <h3 class="text-center">購買方案</h3>
+        <hr />
+        <div class="form-floating mb-3">
+            <select class="form-select" v-model="selectedOption" v-on:change="changeOption">
+                <option v-for="option in option" v-bind:value="option.unitPrice">{{ option.productName }}</option>
+            </select>
+            <label class="form-label mb-3">手機費率</label>
+        </div>
+    </div>    
 </div>
 
 @section Scripts
 {
     <script src="https://unpkg.com/vue@3.5.22/dist/vue.global.js"></script>
     <script>
+        // 寫在script這就是只有程式可以用；寫在data裡會變屬性，HTML元素也可以用(繫結)
+        var baseAddress="https://localhost:7181";
         var vueApp={
             data(){
                 return{     // model
-                            // 屬性
+                    selectedOption: 649,
+                    option:[],
                 };
             },
             methods:{       // controller
-
+                changeOption:function(){
+                    alert(this.selectedOption);
+                }
+            },
+            mounted:async function(){
+                var response=await fetch(`${baseAddress}/api/Products`,{
+                    method:"GET"
+                });
+                if(response.ok){
+                    this.option=await response.json();
+                }
             }
         };
         var app=Vue.createApp(vueApp).mount("#app")
