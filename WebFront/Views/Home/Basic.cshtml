@@ -8,6 +8,8 @@
 <div id="app">
     <!-- View -->
     <h3>{{message}}</h3>
+    <button v-on:click="submit">OK</button>
+    <button @@click="submit">OK簡寫</button>
 </div>
 
 @section Scripts{
@@ -21,9 +23,12 @@
                 };
             },
             methods:{       // controller
-
+                submit: function () {
+                alert("submit");
+                },
             }
         };
         var app=Vue.createApp(vueApp).mount("#app")
     </script>
 }
+
