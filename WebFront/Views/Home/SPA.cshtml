@@ -1,0 +1,326 @@
+﻿@section Styles {
+    <link href="https://unpkg.com/vue3-easy-data-table/dist/style.css" rel="stylesheet">
+
+    <style></style>
+}
+
+
+<div id="app" class="container">
+    @* 新增記錄按鍵+篩選欄位 *@
+    <div class="mb-3">
+        <table>
+            <tr>
+                <td style="width:50%">
+                    <button class="btn btn-primary" title="新增員工記錄"
+                            data-bs-toggle="modal" data-bs-target="#insertModelPage">
+                        新增
+                    </button>
+                </td>
+                <td class="form-floating" style="width:50%">
+                    <input v-model="keyeord" class="form-control" placeholder="" v-on:keyup="filterEmloyees"/>
+                    <label class="form-label">篩選關鍵字</label>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    @* Easy Data Table表格 *@
+    <div class="mb-3">
+        <easy-data-table alternating v-bind:headers="headers" v-bind:items="employees" buttons-pagination 
+                         v-bind:rows-per-page="3" v-bind:search-value="searchValue" v-bind:loading="loading">
+            <template #loading>
+                <img src="~/images/hourglass.gif" title="資料載入中..."/>
+            </template>            
+            <template #empty-message>
+                <img src="~/images/no-data.png" title="沒有符合篩選條件的紀錄!" />
+                <h5 class="text-danger">沒有符合篩選條件的紀錄!</h5>
+            </template>
+            <template #expand="employee">
+                <p>
+                    地址： {{ employee.address + ' ' + employee.city + ' ' + employee.postalCode + ' ' + employee.country }}
+                </p>
+            </template>
+            <template #item-Name="{employeeId, firstName, lastName }">
+                <div class="text-center">
+                    @* vue繫結到屬性(src、title...)要加v-bind:才可 *@
+                    <img v-bind:src=`${baseAddress}/api/Employees/GetPhoto/${employeeId}`
+                         v-bind:title="lastName" class="img-fluid"/>
+                    @*參數可直接當title，不用再加data，img-fluid=>img有多大圖就多大*@
+                    <p>{{ firstName + ' ' + lastName}}</p>
+                </div>
+            </template>
+            <template #item-operation="employee">
+                <div class="text-center">
+                    <img src="~/images/edit.png" title="編輯員工紀錄" v-on:click="updateItem(employee)" />
+                    <img src="~/images/delete.png" title="刪除員工紀錄" v-on:click="deleteItem(employee.employeeId)" />
+                </div>
+            </template>
+        </easy-data-table>
+    </div>
+
+    @* 新增員工記錄的畫面 *@
+    <div class="modal fade"
+         id="insertModelPage"
+         tabindex="-1"
+         data-bs-backdrop="static"
+         data-bs-keyboard="false"
+         role="dialog"
+         aria-labelledby="modalTitleId"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
+             role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitleId">
+                        新增員工記錄
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="insertModel.firstName" placeholder="" />
+                        <label class="form-label">FirstName</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="insertModel.lastName" placeholder="" />
+                        <label class="form-label">LastName</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <select class="form-select" v-model="insertModel.title">
+                            <option v-for="title in titles" v-bind:value="title">{{ title }}</option>
+                        </select>
+                        <label class="form-label">Title</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" v-model="insertModel.birthDate" placeholder="" />
+                        <label class="form-label">BirthDate</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" v-model="insertModel.hireDate" placeholder="" />
+                        <label class="form-label">HireDate</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="insertModel.address" placeholder="" />
+                        <label class="form-label">Address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="insertModel.city" placeholder="" />
+                        <label class="form-label">City</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="insertModel.postalCode" placeholder="" />
+                        <label class="form-label">PostalCode</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="insertModel.country" placeholder="" />
+                        <label class="form-label">Country</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="insertModel.homePhone" placeholder="" />
+                        <label class="form-label">HomePhone</label>
+                    </div>                    
+                    <div class="form-floating mb-3">
+                        <img src="~/images/noimage.png" title="尚無圖片" class="img-fluid"/>
+                        <input type="file" class="form-control" placeholder="" 
+                               v-on:change="insertFileChange($event.target)" accept="image/*"/> @*預先選image檔*@
+                        <label class="form-label">Photo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-info"
+                            data-bs-dismiss="modal">
+                        取消
+                    </button>
+                    <button type="button" 
+                            class="btn btn-primary" 
+                            v-on:click="insertEmployee"
+                            data-bs-dismiss="modal">
+                        新增
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* 編輯員工記錄的畫面 *@
+    <div class="modal fade"
+         id="updateModelPage"
+         tabindex="-1"
+         data-bs-backdrop="static"
+         data-bs-keyboard="false"
+         role="dialog"
+         aria-labelledby="modalTitleId"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg"
+             role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitleId">
+                        編輯員工記錄
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="updateModel.firstName" placeholder="" />
+                        <label class="form-label">FirstName</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="updateModel.lastName" placeholder="" />
+                        <label class="form-label">LastName</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <select class="form-select" v-model="updateModel.title">
+                            <option v-for="title in titles" v-bind:value="title">{{ title }}</option>
+                        </select>
+                        <label class="form-label">Title</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" v-model="updateModel.birthDate" placeholder="" />
+                        <label class="form-label">BirthDate</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" v-model="updateModel.hireDate" placeholder="" />
+                        <label class="form-label">HireDate</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="updateModel.address" placeholder="" />
+                        <label class="form-label">Address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="updateModel.city" placeholder="" />
+                        <label class="form-label">City</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="updateModel.postalCode" placeholder="" />
+                        <label class="form-label">PostalCode</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="updateModel.country" placeholder="" />
+                        <label class="form-label">Country</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input class="form-control" v-model="updateModel.homePhone" placeholder="" />
+                        <label class="form-label">HomePhone</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <img src="~/images/noimage.png" title="尚無圖片" class="img-fluid" />
+                        <input type="file" class="form-control" placeholder=""
+                               v-on:change="updateFileChange($event.target)" accept="image/*" /> @*預先選image檔*@
+                        <label class="form-label">Photo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-info"
+                            data-bs-dismiss="modal">
+                        取消
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            v-on:click="updateEmployee"
+                            data-bs-dismiss="modal">
+                        更新
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.22/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/vue3-easy-data-table"></script>
+
+    <script>
+        // 服務的baseAddress如果只有程式要用就可寫在這
+        var vueApp={
+            components:{
+                EasyDataTable: window['vue3-easy-data-table']
+            },
+            data(){
+                return{     // model
+                    baseAddress:"https://localhost:7181",    // HTML元素要用，所以要寫在屬性
+                    keyeord:"",
+                    headers:[
+                        { text:"員工編號", value:"employeeId", sortable:true, fixed:true },
+                        { text:"姓名", value:"Name", fixed:true },
+                        { text:"職銜", value:"title", sortable:true },
+                        { text:"出生日期", value:"birthDate", sortable:true },
+                        { text:"到職日期", value:"hireDate", sortable:true },
+                        { text:"地址", value:"address", sortable:true },
+                        { text:"城市", value:"city", sortable:true },
+                        { text:"國家", value:"country", sortable:true },
+                        { text:"住家電話", value:"homePhone", sortable:true },
+                        { text:"編輯", value:"operation" },
+                    ],     // 欄位標題
+                    employees:[],   // 欄位內容
+                    titles:[],
+                    loading:false,  // true=載入中，跑loading的template
+                    searchValue:"",
+                    insertModel:{
+                      firstName:"",
+                      lastName:"",
+                      title:"",
+                      birthDate:new Date().toISOString().split('T')[0],
+                      hireDate:new Date().toISOString().split('T')[0],
+                      address:"",
+                      city:"",
+                      postalCode:"",
+                      country:"",
+                      homePhone:"",
+                    },
+                    updateModel:{
+                      employeeId:0,
+                      firstName:"",
+                      lastName:"",
+                      title:"",
+                      birthDate:new Date().toISOString().split('T')[0],
+                      hireDate:new Date().toISOString().split('T')[0],
+                      address:"",
+                      city:"",
+                      postalCode:"",
+                      country:"",
+                      homePhone:"",
+                    },
+                };
+            },
+            methods:{       // controller
+                filterEmloyees:function(){
+                    alert("filterEmloyees");
+                },
+                updateItem:function(employee){
+                    alert(`編輯:${employee.employeeId}`);
+                },
+                deleteItem:function(employeeId){
+                    alert(`刪除:${employeeId}`);
+                },
+                insertEmployee:function(){
+                    alert("新增員工記錄")
+                },
+                updateEmployee:function(){
+                    alert("編輯員工記錄")
+                },
+                insertFileChange:function(inputFile){
+                    var file=inputFile.files[0];
+                    alert(`上傳:${file.name}`);
+                },
+                updateFileChange:function(inputFile){
+                    var file=inputFile.files[0];
+                    alert(`上傳:${file.name}`);
+                },
+
+            }
+        };
+        var app=Vue.createApp(vueApp).mount("#app")
+    </script>
+}
+

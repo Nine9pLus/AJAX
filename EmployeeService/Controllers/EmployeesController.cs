@@ -53,10 +53,10 @@ namespace EmployeeService.Controllers
 		}
 
 		// 抓替代圖片
-		// Get: /api/Employees/GetPhoto/5
+		// Get: /api/Employees/GetPhoto/1
 		[HttpGet("GetPhoto/{id}")]
 		// 路由樣板 = 固定字串區段 "GetPhoto" + 動態參數區段 "{id}"
-		// 例如呼叫 /api/Employees/GetPhoto/5 時，id=5 會被路由自動解析並傳進方法參數
+		// 例如呼叫 /api/Employees/GetPhoto/1 時，id=1 會被路由自動解析並傳進方法參數
 		public async Task<FileResult> GetPhoto(int id)
 		{
 			// 抓預設替代圖案的路徑：wwwroot/images/NoImages.png
